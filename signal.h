@@ -10,7 +10,7 @@ class Signal
 {
 public:
    Signal( ) : signaled( false ) {}
-   bool reset( )
+   void reset( )
    {
       std::lock_guard<std::mutex> lock( mtx );
       signaled = false;
