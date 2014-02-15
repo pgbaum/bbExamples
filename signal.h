@@ -1,6 +1,7 @@
 #ifndef SIGNAL_H_INCLUDED
 #define SIGNAL_H_INCLUDED
 
+#include <condition_variable>
 #include <thread>
 #include <mutex>
 #include <chrono>
