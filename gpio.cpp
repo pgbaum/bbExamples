@@ -87,9 +87,18 @@ namespace
 
    int getNumberFromName( const char *name )
    {
+      if( strncmp( name, "GPIO", 4 ) == 0 )
+      {
+         const int bank = atoi( name + 4 );
+         const char *p = strchr( name, '_' );
+         if( p == nullptr )
+            throw std::invalid_argument( "Invalid GPIO name" );
+         const int num = atoi( p + 1 );
+         return bank * 32 + num;
+      }
       auto p( nameMap.find( name ) );
       if( p == nameMap.end() )
-         throw std::invalid_argument( "Invalid GPO Name" );
+         throw std::invalid_argument( "Invalid header name" );
       return p->second;
    }
 }
