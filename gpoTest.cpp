@@ -4,13 +4,8 @@
 #include <iostream>
 #include <stdexcept>
 
-int main( int argc, char *argv[] )
+void doIt( const char *pin )
 {
-   const char *pin = "P8.10";
-   if( argc == 2 )
-      pin = argv[1];
-
-   std::cout << "Starting testing " << pin << '\n';
    GPO gpio( pin );
    for( int k = 0; k < 5; ++k )
    {
@@ -21,6 +16,30 @@ int main( int argc, char *argv[] )
       gpio.set( 0 );
       std::this_thread::sleep_for( std::chrono::milliseconds( 1000 ) );
    }
+}
+
+int main( int argc, char *argv[] )
+{
+   const char *pin = "P8.10";
+   if( argc == 2 )
+      pin = argv[1];
+
+   std::cout << "Starting testing " << pin << '\n';
+   try
+   {
+      doIt( pin );
+   }
+   catch( const std::exception &e )
+   {
+      std::cerr << "Error: " << e.what() << '\n';
+      return 1;
+   }
+   catch( ... )
+   {
+      std::cerr << "Unknown error\n";
+      return 1;
+   }
+
 
    std::cout << "Exit\n";
 }
