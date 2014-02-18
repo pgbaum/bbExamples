@@ -83,6 +83,11 @@ namespace
       { "P9.29", 96 + 15 },
       { "P9.30", 96 + 16 },
       { "P9.31", 96 + 14 },
+      // LEDs
+      { "USR0", 32 + 21 },
+      { "USR1", 32 + 22 },
+      { "USR2", 32 + 23 },
+      { "USR3", 32 + 24 },
    };
 
    int getNumberFromName( const char *name )
