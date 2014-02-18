@@ -154,7 +154,7 @@ GPO::~GPO( )
 
 void GPO::set( bool val )
 {
-   fstr << (int)val;
+   fstr.put( val ? '1' : '0' );
    fstr.flush();
 }
 
