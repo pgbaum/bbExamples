@@ -1,7 +1,7 @@
 CXXFLAGS += -g -std=c++0x -Wall -pedantic
 LIBS     += -lpthread
 
-i2cTest: i2cTest.o i2c.o
+i2cTest: i2cTest.o ledMatrix.o i2c.o
 	$(CXX) $(CXXFLAGS) $^ $(LIBS) -o $@
 
 signalTest: signalTest.o
