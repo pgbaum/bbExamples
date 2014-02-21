@@ -1,64 +1,9 @@
 #include <stdexcept>
 #include <iostream>
-#include <cstring>
-#include <cerrno>
-#include <cstdio>
-#include <cstdint>
 #include <chrono>
 #include <thread>
 
-extern "C" {
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/ioctl.h>
-#include <linux/i2c-dev.h>
-}
-
-class I2C
-{
-private:
-   int dev;
-
-   void registerClient( int addr )
-   {
-      if( ioctl( dev, I2C_SLAVE, addr ) < 0 )
-      {
-         throw std::invalid_argument( strerror( errno ) );
-      }
-   }
-
-public:
-   // TODO: allow more than one device
-   I2C( const char *device, int address )
-   {
-      if( (dev = open( device, O_RDWR ) ) < 0)
-         throw std::invalid_argument( 
-               std::string( "I2C: Unable to open device: " )
-               + strerror( errno ) );
-      registerClient( address );
-   }
-   ~I2C( )
-   {
-      close( dev );
-   }
-   void write1( uint8_t cmd,  uint8_t val )
-   {
-      write( cmd, &val, 1 );
-   }
-   void write( uint8_t cmd, uint8_t *p, int n )
-   {
-      if( n > 32 )
-         throw std::invalid_argument( "I2C: write max 32 byte allowed." );
-
-      uint8_t buf[33];
-      buf[0] = cmd;
-      for( int k = 0; k < n; ++k )
-         buf[k+1] = p[k];
-      if( ::write( dev, buf, n + 1 ) != n + 1 )
-         throw std::invalid_argument( "I2C: write failed" );
-   }
-};
-
+#include "i2c.h"
 
 void doIt( )
 {
