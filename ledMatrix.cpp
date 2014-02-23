@@ -8,6 +8,7 @@
 
 LedMatrix::LedMatrix( const char *dev, int address ) : i2c( dev, address )
 {
+   clearBuffer();
    switchOn( true );
    setBrightness( 0 );
 }
