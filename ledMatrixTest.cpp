@@ -31,14 +31,20 @@ void doIt( )
    LedMatrix ledMatrix( "/dev/i2c-1", 0x70 );
 
    // set pixel
-   uint8_t allRed[LedMatrix::BUF_SIZE] = {
-      0, 0xFF, 0, 0xFF, 0, 0xFF, 0, 0xFF, 0, 0xFF, 0, 0xFF, 0, 0xFF, 0, 0xFF };
-   uint8_t allGreen[LedMatrix::BUF_SIZE] = {
-      0xFF, 0, 0xFF, 0, 0xFF, 0, 0xFF, 0, 0xFF, 0, 0xFF, 0, 0xFF, 0, 0xFF, 0 };
    uint8_t greenCross[LedMatrix::BUF_SIZE] = {
       0x81, 0, 0x42, 0, 0x24, 0, 0x18, 0, 0x18, 0, 0x24, 0, 0x42, 0, 0x81, 0 };
 
-   ledMatrix.setBuffer( allRed );
+   ledMatrix.setSquare( 0, 0, 7, 7, LedMatrix::RED );
+   ledMatrix.displayBuffer();
+   std::this_thread::sleep_for( std::chrono::milliseconds( 500 ) );
+
+   ledMatrix.clearBuffer( );
+   ledMatrix.setSquare( 0, 0, 7, 7, LedMatrix::GREEN );
+   ledMatrix.displayBuffer();
+   std::this_thread::sleep_for( std::chrono::milliseconds( 500 ) );
+
+   ledMatrix.clearBuffer( );
+   ledMatrix.setSquare( 0, 0, 7, 7, LedMatrix::YELLOW );
    ledMatrix.displayBuffer();
    for( int k = 1; k <= 15; ++k )
    {
@@ -60,9 +66,6 @@ void doIt( )
       std::this_thread::sleep_for( std::chrono::milliseconds( 1000 ) );
    }
 
-   ledMatrix.setBuffer( allGreen );
-   ledMatrix.displayBuffer();
-   std::this_thread::sleep_for( std::chrono::milliseconds( 500 ) );
    ledMatrix.clearBuffer( );
    ledMatrix.displayBuffer();
    std::this_thread::sleep_for( std::chrono::milliseconds( 500 ) );

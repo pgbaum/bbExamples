@@ -1,5 +1,6 @@
 #include "ledMatrix.h"
 #include <algorithm>
+#include <utility>
 
 /*
    This implements a bicolor matrix with
@@ -66,4 +67,34 @@ void LedMatrix::setDot( int x, int y, int color )
    buffer[x] |= 1 << y;
    if( color == YELLOW )
       buffer[x+1] |= 1 << y;
+}
+
+void LedMatrix::setSquare( int x0, int y0, int x1, int y1, int color )
+{
+   if( x0 > x1 )
+      std::swap( x0, x1 );
+   if( y0 > y1 )
+      std::swap( y0, y1 );
+   if( x0 < 0 || y0 < 0 || x1 > 7 || y1 > 7 )
+      throw std::invalid_argument( "0 <= x,y < 7" );
+   if( color < GREEN || color > YELLOW )
+      throw std::invalid_argument( "1 <= color <= 3" );
+
+   uint8_t val = 1 << y0;
+   for( ++y0; y0 <= y1; ++y0 )
+      val += 1 << y0;
+
+   x0 *= 2;
+   x1 = (x1 + 1 ) * 2;
+   if( color == RED )
+   {
+      ++x0;
+      ++x1;
+   }
+
+   for( uint8_t x = x0; x < x1; x += 2 )
+      buffer[x] |= val;
+   if( color == YELLOW )
+      for( uint8_t x = x0 + 1; x < x1; x += 2 )
+         buffer[x] |= val;
 }

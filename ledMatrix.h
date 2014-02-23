@@ -22,6 +22,7 @@ public:
    void setBuffer( const uint8_t *p );
    void displayBuffer();
    void setDot( int x, int y, int color );
+   void setSquare( int x0, int y0, int x1, int x2, int color );
 
 private:
    I2C i2c;
