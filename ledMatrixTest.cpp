@@ -26,6 +26,26 @@ void dotSquare( LedMatrix *m, int offset, int col )
       dotSteps( m, offset, y, col );
 }
 
+
+void showCharacters( LedMatrix *l )
+{
+   for( char c = ' '; c <= '~'; ++c )
+   {
+      int color = LedMatrix::GREEN;
+      switch( c % 3 )
+      {
+         case 0: color = LedMatrix::RED; break;
+         case 1: color = LedMatrix::GREEN; break;
+         case 2: color = LedMatrix::YELLOW; break;
+      }
+      l->clearBuffer();
+      l->setChar( c, color );
+      l->displayBuffer();
+      std::this_thread::sleep_for( std::chrono::milliseconds( 500 ) );
+   }
+}
+
+
 void doIt( )
 {
    LedMatrix ledMatrix( "/dev/i2c-1", 0x70 );
@@ -72,6 +92,8 @@ void doIt( )
    ledMatrix.setBuffer( greenCross );
    ledMatrix.displayBuffer();
    std::this_thread::sleep_for( std::chrono::milliseconds( 500 ) );
+
+   showCharacters( &ledMatrix );
 
    dotSquare( &ledMatrix, 0, LedMatrix::GREEN );
    dotSquare( &ledMatrix, 1, LedMatrix::GREEN );
