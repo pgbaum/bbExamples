@@ -52,6 +52,21 @@ void showHorse( LedMatrix *l )
    l->displayBuffer();
 }
 
+void showSmiley( LedMatrix *l )
+{
+   l->clearBuffer();
+   // l->setDot( 0, 2, LedMatrix::RED );
+   l->setDot( 0, 1, LedMatrix::RED );
+   l->setSquare( 1, 0, 5, 0, LedMatrix::RED );
+   l->setDot( 6, 1, LedMatrix::RED );
+   // l->setDot( 6, 2, LedMatrix::RED );
+   l->setDot( 3, 3, LedMatrix::YELLOW );
+   l->setDot( 3, 4, LedMatrix::YELLOW );
+   l->setDot( 1, 6, LedMatrix::GREEN );
+   l->setDot( 5, 6, LedMatrix::GREEN );
+   l->displayBuffer();
+}
+
 void showCharacters( LedMatrix *l )
 {
    for( char c = ' '; c <= '~'; ++c )
@@ -76,6 +91,9 @@ void doIt( )
    LedMatrix ledMatrix( "/dev/i2c-1", 0x70 );
 
    showHorse( &ledMatrix );
+   std::this_thread::sleep_for( std::chrono::milliseconds( 1000 ) );
+
+   showSmiley( &ledMatrix );
    std::this_thread::sleep_for( std::chrono::milliseconds( 1000 ) );
 
    // set pixel
