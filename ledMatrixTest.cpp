@@ -26,6 +26,31 @@ void dotSquare( LedMatrix *m, int offset, int col )
       dotSteps( m, offset, y, col );
 }
 
+void showHorse( LedMatrix *l )
+{
+   l->clearBuffer();
+   // lawn
+   l->setSquare( 0, 0, 7, 0, LedMatrix::GREEN );
+   // shoes
+   l->setDot( 2, 1, LedMatrix::RED );
+   l->setDot( 5, 1, LedMatrix::RED );
+   // legs
+   l->setSquare( 2, 2, 2, 4, LedMatrix::YELLOW );
+   l->setSquare( 5, 2, 5, 3, LedMatrix::YELLOW );
+   // body
+   l->setSquare( 3, 4, 5, 5, LedMatrix::YELLOW );
+   // head
+   l->setSquare( 0, 4, 0, 6, LedMatrix::YELLOW );
+   l->setDot( 1, 5, LedMatrix::YELLOW );
+   // tail
+   l->setDot( 6, 5, LedMatrix::RED );
+   l->setSquare( 7, 2, 7, 4, LedMatrix::RED );
+   // mane
+   l->setDot( 0, 7, LedMatrix::RED );
+   l->setDot( 1, 6, LedMatrix::RED );
+   l->setDot( 2, 5, LedMatrix::RED );
+   l->displayBuffer();
+}
 
 void showCharacters( LedMatrix *l )
 {
@@ -50,10 +75,14 @@ void doIt( )
 {
    LedMatrix ledMatrix( "/dev/i2c-1", 0x70 );
 
+   showHorse( &ledMatrix );
+   std::this_thread::sleep_for( std::chrono::milliseconds( 1000 ) );
+
    // set pixel
-   uint8_t greenCross[LedMatrix::BUF_SIZE] = {
+   const uint8_t greenCross[LedMatrix::BUF_SIZE] = {
       0x81, 0, 0x42, 0, 0x24, 0, 0x18, 0, 0x18, 0, 0x24, 0, 0x42, 0, 0x81, 0 };
 
+   ledMatrix.clearBuffer( );
    ledMatrix.setSquare( 0, 0, 7, 7, LedMatrix::RED );
    ledMatrix.displayBuffer();
    std::this_thread::sleep_for( std::chrono::milliseconds( 500 ) );
