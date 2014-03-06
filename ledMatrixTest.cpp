@@ -78,7 +78,6 @@ void showCharacters( LedMatrix *l )
          case 1: color = LedMatrix::GREEN; break;
          case 2: color = LedMatrix::YELLOW; break;
       }
-      l->clearBuffer();
       l->setChar( c, color );
       l->displayBuffer();
       std::this_thread::sleep_for( std::chrono::milliseconds( 500 ) );

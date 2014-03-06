@@ -199,15 +199,24 @@ void LedMatrix::setSquare( int x0, int y0, int x1, int y1, int color )
          buffer[x] |= val;
 }
 
-void LedMatrix::setChar( char c, int color )
+int LedMatrix::setChar( char c, int color )
 {
+   clearBuffer();
+   const uint8_t *p = charTable[c - 0x20];
    if( c < 0x20 || c > 0x7E )
       throw std::invalid_argument( "0x20 <= char <= 0x7E" );
    if( color != RED )
       for( int k = 0; k < 5; ++k )
-         buffer[k*2] = charTable[c-0x20][k];
+         buffer[k*2] = p[k];
    if( color != GREEN )
       for( int k = 0; k < 5; ++k )
-         buffer[k*2+1] = charTable[c-0x20][k];
+         buffer[k*2+1] = p[k];
+
+   // return width of character
+   for( int k = 4; k >= 0; --k )
+      if( p[k] != 0 )
+         return k + 1;
+   return 4;
+}
 
 }

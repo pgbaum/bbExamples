@@ -23,7 +23,8 @@ public:
    void displayBuffer();
    void setDot( int x, int y, int color );
    void setSquare( int x0, int y0, int x1, int x2, int color );
-   void setChar( char c, int color );
+   // return width of character
+   int setChar( char c, int color );
 
 private:
    I2C i2c;
