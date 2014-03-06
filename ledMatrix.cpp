@@ -150,6 +150,11 @@ void LedMatrix::setBuffer( const uint8_t *p )
    std::copy( p, p + BUF_SIZE, buffer );
 }
 
+const uint8_t *LedMatrix::getBuffer( ) const
+{
+   return buffer;
+}
+
 void LedMatrix::displayBuffer()
 {
    i2c.write( 0, buffer, BUF_SIZE );
@@ -219,4 +224,12 @@ int LedMatrix::setChar( char c, int color )
    return 4;
 }
 
+int LedMatrix::getXResolution() const
+{
+   return 8;
+}
+
+int LedMatrix::getDotWidth() const
+{
+   return 2;
 }
