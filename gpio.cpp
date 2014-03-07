@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace
 {
+   const char *basePath = "/sys/class/gpio/";
    struct Comp
    {
       bool operator()( const char *a, const char *b ) const
@@ -134,37 +135,55 @@ namespace
 }
 
 
-void GPO::unexport( )
+GPIO::GPIO( int gpio_, int direction ) : gpio( gpio_ )
 {
-   const std::string path(  "/sys/class/gpio/" );
+   const std::string path(  basePath );
+   std::fstream f( (path + "export" ).c_str(), std::ios_base::out );
+   f.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
+   f << gpio;
+   f.close();
+   try
+   {
+      f.open( (path + "gpio" + std::to_string( gpio ) + "/direction").c_str(),
+            std::ios_base::out );
+      if( direction == IN )
+         f << "in";
+      else
+         f << "out";
+      f.close();
+   }
+   catch( ... )
+   {
+      close( );
+      throw;
+   }
+}
+
+void GPIO::close( )
+{
+   const std::string path( basePath );
    std::fstream f( (path + "unexport" ).c_str(), std::ios_base::out );
    f << gpio;
    f.close();
 }
 
-GPO::GPO( int gpio_ ) : gpio( gpio_ )
+GPIO::~GPIO( )
 {
-   const std::string path(  "/sys/class/gpio/" );
-   std::fstream f( (path + "export" ).c_str(), std::ios_base::out );
-   f.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
-   f << gpio;
-   f.close();
-
    try
    {
-      f.open( (path + "gpio" + std::to_string( gpio ) + "/direction").c_str(),
-            std::ios_base::out );
-      f << "out";
-      f.close();
-      fstr.open( (path + "gpio" + std::to_string( gpio ) + "/value").c_str(),
-            std::ios_base::out );
-      fstr.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
+      close();
    }
    catch( ... )
    {
-      unexport( );
-      throw;
    }
+}
+
+GPO::GPO( int gpio_ ) : gpio( gpio_, GPIO::OUT )
+{
+   const std::string path(  basePath );
+   fstr.open( (path + "gpio" + std::to_string( gpio_ ) + "/value").c_str(),
+         std::ios_base::out );
+   fstr.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
 }
 
 GPO::GPO( const char *name ) : GPO( getNumberFromName( name ) )
@@ -186,5 +205,5 @@ void GPO::set( bool val )
 void GPO::close( )
 {
    fstr.close();
-   unexport();
+   gpio.close();
 }

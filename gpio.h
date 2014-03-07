@@ -3,12 +3,22 @@
 
 #include <fstream>
 
+class GPIO
+{
+   int gpio;
+
+public:
+   enum { IN, OUT };
+   GPIO( int gpio_, int direction );
+   ~GPIO( );
+   void close( );
+};
+
 class GPO
 {
    std::fstream fstr;
-   int gpio;
+   GPIO gpio;
 
-   void unexport( );
 public:
    GPO( int gpio_ );
    GPO( const char *name );
