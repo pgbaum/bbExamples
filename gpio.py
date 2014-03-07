@@ -184,8 +184,34 @@ mux = [
    ( 0x1144, "ddr_data1_ioctrl", "", "" )
 ]
 
-# print sorted by header pin
-onlyHeader = [t for t in mux if len( t[3] )]
-for el in sorted( onlyHeader,
-      key = lambda t: int( t[3][1] ) * 100 + int( t[3][3:] ) ):
-   print "{:5} {:s}".format( el[3], el[2] )
+import sys
+
+def findByAddress( addr ):
+   for el in mux:
+      if el[0] == addr:
+         return el
+   return None
+
+def showByHeaderPin( muxList ):
+   # print sorted by header pin
+   onlyHeader = [t for t in muxList if len( t[3] )]
+   for el in sorted( onlyHeader,
+         key = lambda t: int( t[3][1] ) * 100 + int( t[3][3:] ) ):
+      print "{:5} {:s}".format( el[3], el[2] )
+
+
+if len( sys.argv ) == 2 and sys.argv[1] == "findGPIO":
+   gpios = []
+   for line in open( "/sys/kernel/debug/pinctrl/44e10800.pinmux/pins" ):
+      ll =  line.strip().split( " " )
+      if len( ll ) == 5:
+         mode = ll[3]
+         if mode.endswith( '7' ):
+            addr = int( ll[2][5:-3], 16 )
+            gpios.append( findByAddress( addr ) )
+
+   if len( gpios ) > 0:
+      showByHeaderPin( gpios )
+
+else:
+   showByHeaderPin( mux )
