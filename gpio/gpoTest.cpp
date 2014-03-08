@@ -46,7 +46,7 @@ void doIt( const char *pin )
 
 int main( int argc, char *argv[] )
 {
-   const char *pin = "P8.10";
+   const char *pin = "USR0";
    if( argc == 2 )
       pin = argv[1];
 
