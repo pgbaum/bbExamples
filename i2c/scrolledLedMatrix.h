@@ -1,7 +1,7 @@
 #ifndef SCROLLEDLEDMATRIX_H_INCLUDED
 #define SCROLLEDLEDMATRIX_H_INCLUDED
 #include "ledMatrix.h"
-#include "signal.h"
+#include "../utilities/signal.h"
 #include <string>
 #include <thread>
 
