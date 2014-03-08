@@ -32,9 +32,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <map>
 #include <cstring>
 
+#define SYSFS_GPIO_DIR "/sys/class/gpio/"
+
 namespace
 {
-   const char *basePath = "/sys/class/gpio/";
    struct Comp
    {
       bool operator()( const char *a, const char *b ) const
@@ -138,16 +139,15 @@ namespace
 
 GPIO::GPIO( int gpio_, int direction ) : gpio( gpio_ )
 {
-   const std::string path(  basePath );
-   int fd = open( ( path + "export" ).c_str(), O_WRONLY );
+   int fd = open( SYSFS_GPIO_DIR "export", O_WRONLY );
    if( fd < 0 )
       throw std::invalid_argument( strerror( errno ) );
    std::string str = std::to_string( gpio );
    write( fd, str.c_str(), str.size() + 1 );
    ::close( fd );
 
-   fd = open( (path + "gpio" + std::to_string( gpio ) + "/direction").c_str(),
-         O_WRONLY );
+   fd = open( ( std::string( SYSFS_GPIO_DIR "gpio" )
+         + std::to_string( gpio ) + "/direction").c_str(), O_WRONLY );
    if( fd < 0 )
    {
       close();
@@ -162,8 +162,7 @@ GPIO::GPIO( int gpio_, int direction ) : gpio( gpio_ )
 
 void GPIO::close( )
 {
-   const std::string path( basePath );
-   int fd = open( (path + "unexport" ).c_str(), O_WRONLY );
+   int fd = open( SYSFS_GPIO_DIR "unexport", O_WRONLY );
    std::string str = std::to_string( gpio );
    write( fd, str.c_str(), str.size() + 1 );
    ::close( fd );
@@ -182,8 +181,8 @@ GPIO::~GPIO( )
 
 GPO::GPO( int gpio_ ) : gpio( gpio_, GPIO::OUT )
 {
-   const std::string path(  basePath );
-   fd = open( (path + "gpio" + std::to_string( gpio_ ) + "/value").c_str(),
+   const std::string path( SYSFS_GPIO_DIR "gpio"  );
+   fd = open( (path + std::to_string( gpio_ ) + "/value").c_str(),
          O_WRONLY );
    if( fd < 0 )
       throw std::invalid_argument( strerror( errno ) );
