@@ -25,7 +25,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "gpio.h"
-#include <iostream>
+#include <unistd.h>
+#include <fcntl.h>
 #include <string>
 #include <stdexcept>
 #include <map>
@@ -138,33 +139,34 @@ namespace
 GPIO::GPIO( int gpio_, int direction ) : gpio( gpio_ )
 {
    const std::string path(  basePath );
-   std::fstream f( (path + "export" ).c_str(), std::ios_base::out );
-   f.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
-   f << gpio;
-   f.close();
-   try
+   int fd = open( ( path + "export" ).c_str(), O_WRONLY );
+   if( fd < 0 )
+      throw std::invalid_argument( strerror( errno ) );
+   std::string str = std::to_string( gpio );
+   write( fd, str.c_str(), str.size() + 1 );
+   ::close( fd );
+
+   fd = open( (path + "gpio" + std::to_string( gpio ) + "/direction").c_str(),
+         O_WRONLY );
+   if( fd < 0 )
    {
-      f.open( (path + "gpio" + std::to_string( gpio ) + "/direction").c_str(),
-            std::ios_base::out );
-      if( direction == IN )
-         f << "in";
-      else
-         f << "out";
-      f.close();
+      close();
+      throw std::invalid_argument( strerror( errno ) );
    }
-   catch( ... )
-   {
-      close( );
-      throw;
-   }
+   if( direction == IN )
+      write( fd, "in", 3 );
+   else
+      write( fd, "out", 4 );
+   ::close( fd );
 }
 
 void GPIO::close( )
 {
    const std::string path( basePath );
-   std::fstream f( (path + "unexport" ).c_str(), std::ios_base::out );
-   f << gpio;
-   f.close();
+   int fd = open( (path + "unexport" ).c_str(), O_WRONLY );
+   std::string str = std::to_string( gpio );
+   write( fd, str.c_str(), str.size() + 1 );
+   ::close( fd );
 }
 
 GPIO::~GPIO( )
@@ -181,9 +183,10 @@ GPIO::~GPIO( )
 GPO::GPO( int gpio_ ) : gpio( gpio_, GPIO::OUT )
 {
    const std::string path(  basePath );
-   fstr.open( (path + "gpio" + std::to_string( gpio_ ) + "/value").c_str(),
-         std::ios_base::out );
-   fstr.exceptions ( std::ifstream::failbit | std::ifstream::badbit );
+   fd = open( (path + "gpio" + std::to_string( gpio_ ) + "/value").c_str(),
+         O_WRONLY );
+   if( fd < 0 )
+      throw std::invalid_argument( strerror( errno ) );
 }
 
 GPO::GPO( const char *name ) : GPO( getNumberFromName( name ) )
@@ -192,18 +195,18 @@ GPO::GPO( const char *name ) : GPO( getNumberFromName( name ) )
 
 GPO::~GPO( )
 {
-   if( fstr.is_open() )
+   if( fd > 0 )
       close();
 }
 
 void GPO::set( bool val )
 {
-   fstr.put( val ? '1' : '0' );
-   fstr.flush();
+   write( fd, val ? "1": "0", 2 );
 }
 
 void GPO::close( )
 {
-   fstr.close();
+   ::close( fd );
+   fd = 0;
    gpio.close();
 }

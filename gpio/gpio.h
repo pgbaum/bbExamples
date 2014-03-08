@@ -1,8 +1,6 @@
 #ifndef GPIO_H_INCLUDED
 #define GPIO_H_INCLUDED
 
-#include <fstream>
-
 class GPIO
 {
    int gpio;
@@ -16,7 +14,7 @@ public:
 
 class GPO
 {
-   std::fstream fstr;
+   int fd;
    GPIO gpio;
 
 public:
