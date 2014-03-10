@@ -213,3 +213,39 @@ void GPO::close( )
    fd = 0;
    gpio.close();
 }
+
+GPI::GPI( int gpio_ ) : gpio( gpio_, GPIO::IN )
+{
+   fd = gpio_;
+}
+
+GPI::GPI( const char *name ) : GPI( getNumberFromName( name ) )
+{
+   const std::string path( SYSFS_GPIO_DIR "gpio"  );
+   fd = open( (path + std::to_string( fd ) + "/value").c_str(),
+         O_RDONLY );
+   if( fd < 0 )
+      throw std::invalid_argument( strerror( errno ) );
+}
+
+GPI::~GPI( )
+{
+   if( fd > 0 )
+      close();
+}
+
+bool GPI::get( )
+{
+   char buf;
+   if( lseek( fd, 0, SEEK_SET ) != 0
+         || read( fd, &buf, 1 ) != 1 )
+      throw std::invalid_argument( strerror( errno ) );
+   return buf == '1';
+}
+
+void GPI::close( )
+{
+   ::close( fd );
+   fd = 0;
+   gpio.close();
+}

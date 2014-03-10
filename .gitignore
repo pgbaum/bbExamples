@@ -2,6 +2,7 @@
 *.o
 
 gpio/gpoTest
+gpio/gpiTest
 i2c/ledMatrixTest
 i2c/scrolledLedMatrixTest
 utilities/signalTest

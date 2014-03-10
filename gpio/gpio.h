@@ -25,5 +25,19 @@ public:
    void close( );
 };
 
+class GPI
+{
+   int fd;
+   GPIO gpio;
+
+public:
+   GPI( int gpio_ );
+   GPI( const char *name );
+   ~GPI( );
+   bool get( );
+   void close( );
+};
+
+
 #endif
 
