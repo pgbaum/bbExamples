@@ -113,7 +113,7 @@ void showCharacters( LedMatrix *l )
 
 void doIt( )
 {
-   LedMatrix ledMatrix( "/dev/i2c-1", 0x70 );
+   LedMatrix ledMatrix( "/dev/i2c-2", 0x70 );
 
    showHorse( &ledMatrix );
    std::this_thread::sleep_for( std::chrono::milliseconds( 1000 ) );

@@ -29,7 +29,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 void doIt()
 {
-   ScrolledLedMatrix sm( "/dev/i2c-1", 0x70 );
+   ScrolledLedMatrix sm( "/dev/i2c-2", 0x70 );
    sm.setText( "3 Times ", LedMatrix::GREEN, 3 );
    sm.wait();
    sm.setText( "3 seconds", LedMatrix::GREEN, 300 );
