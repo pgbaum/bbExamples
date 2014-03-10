@@ -1,2 +1,7 @@
 *.swp
 *.o
+
+gpio/gpoTest
+i2c/ledMatrixTest
+i2c/scrolledLedMatrixTest
+utilities/signalTest
