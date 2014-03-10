@@ -199,19 +199,31 @@ def showByHeaderPin( muxList ):
          key = lambda t: int( t[3][1] ) * 100 + int( t[3][3:] ) ):
       print "{:5} {:s}".format( el[3], el[2] )
 
+def findGPIO( up ):
+   if up:
+      end = '37'
+   else:
+      end = '27'
 
-if len( sys.argv ) == 2 and sys.argv[1] == "findGPIO":
    gpios = []
    for line in open( "/sys/kernel/debug/pinctrl/44e10800.pinmux/pins" ):
       ll =  line.strip().split( " " )
       if len( ll ) == 5:
          mode = ll[3]
-         if mode.endswith( '7' ):
+         if mode.endswith( end ):
             addr = int( ll[2][5:-3], 16 )
             gpios.append( findByAddress( addr ) )
 
    if len( gpios ) > 0:
       showByHeaderPin( gpios )
+
+if len( sys.argv ) == 2:
+   if sys.argv[1] == "findUpGPIO":
+      findGPIO( True )
+   elif sys.argv[1] == "findDownGPIO":
+      findGPIO( False )
+   else:
+      showByHeaderPin( mux )
 
 else:
    showByHeaderPin( mux )
