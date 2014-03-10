@@ -1,6 +1,8 @@
 CXXFLAGS += -g -std=c++0x -Wall -pedantic
 LIBS     += -lpthread
 
+all: scrolledLedMatrixTest ledMatrixTest
+
 scrolledLedMatrixTest: scrolledLedMatrixTest.o scrolledLedMatrix.o ledMatrix.o i2c.o
 	$(CXX) $(CXXFLAGS) $^ $(LIBS) -o $@
 
