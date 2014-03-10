@@ -30,17 +30,31 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <iostream>
 #include <stdexcept>
 
+void set( GPO *g, bool val )
+{
+   std::cout << (val ? "On\n" : "Off\n");
+   g->set( val );
+   std::this_thread::sleep_for( std::chrono::milliseconds( 1000 ) );
+}
+
 void doIt( const char *pin )
 {
-   GPO gpio( pin );
-   for( int k = 0; k < 5; ++k )
    {
-      std::cout << "On\n";
-      gpio.set( 1 );
+      std::cout << "Init with High\n";
+      GPO gpio( pin, true );
       std::this_thread::sleep_for( std::chrono::milliseconds( 1000 ) );
-      std::cout << "Off\n";
-      gpio.set( 0 );
+      set( &gpio, 0 );
+      set( &gpio, 1 );
+      set( &gpio, 0 );
+   }
+   std::this_thread::sleep_for( std::chrono::milliseconds( 2000 ) );
+   {
+      std::cout << "Init with Low\n";
+      GPO gpio( pin, false );
       std::this_thread::sleep_for( std::chrono::milliseconds( 1000 ) );
+      set( &gpio, 1 );
+      set( &gpio, 0 );
+      set( &gpio, 1 );
    }
 }
 

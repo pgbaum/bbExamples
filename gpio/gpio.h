@@ -6,7 +6,7 @@ class GPIO
    int gpio;
 
 public:
-   enum { IN, OUT };
+   enum { IN, OUT, LOW, HIGH };
    GPIO( int gpio_, int direction );
    ~GPIO( );
    void close( );
@@ -18,8 +18,8 @@ class GPO
    GPIO gpio;
 
 public:
-   GPO( int gpio_ );
-   GPO( const char *name );
+   GPO( int gpio_, bool val = false );
+   GPO( const char *name, bool val = false );
    ~GPO( );
    void set( bool val = true );
    void close( );

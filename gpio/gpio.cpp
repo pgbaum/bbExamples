@@ -153,10 +153,14 @@ GPIO::GPIO( int gpio_, int direction ) : gpio( gpio_ )
       close();
       throw std::invalid_argument( strerror( errno ) );
    }
-   if( direction == IN )
-      write( fd, "in", 3 );
-   else
-      write( fd, "out", 4 );
+   switch( direction )
+   {
+      case LOW:  write( fd, "low", 4 ); break;
+      case HIGH: write( fd, "high", 5 ); break;
+      case IN:   write( fd, "in", 3 ); break;
+      case OUT:
+      default:   write( fd, "out", 4 );
+   }
    ::close( fd );
 }
 
@@ -179,7 +183,7 @@ GPIO::~GPIO( )
    }
 }
 
-GPO::GPO( int gpio_ ) : gpio( gpio_, GPIO::OUT )
+GPO::GPO( int gpio_, bool val ) : gpio( gpio_, val ? GPIO::HIGH : GPIO::LOW )
 {
    const std::string path( SYSFS_GPIO_DIR "gpio"  );
    fd = open( (path + std::to_string( gpio_ ) + "/value").c_str(),
@@ -188,7 +192,7 @@ GPO::GPO( int gpio_ ) : gpio( gpio_, GPIO::OUT )
       throw std::invalid_argument( strerror( errno ) );
 }
 
-GPO::GPO( const char *name ) : GPO( getNumberFromName( name ) )
+GPO::GPO( const char *name, bool val ) : GPO( getNumberFromName( name ), val )
 {
 }
 
