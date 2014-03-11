@@ -9,6 +9,7 @@ public:
    enum { IN, OUT, LOW, HIGH };
    GPIO( int gpio_, int direction );
    ~GPIO( );
+   int getNum( ) const;
    void close( );
 };
 
@@ -31,10 +32,14 @@ class GPI
    GPIO gpio;
 
 public:
+   enum { NONE, RISING, FALLING, BOTH };
+
    GPI( int gpio_ );
    GPI( const char *name );
    ~GPI( );
+   bool wait( );
    bool get( );
+   void setEdge( int edge );
    void close( );
 };
 

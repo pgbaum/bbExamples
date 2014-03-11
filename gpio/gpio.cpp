@@ -27,10 +27,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "gpio.h"
 #include <unistd.h>
 #include <fcntl.h>
+#include <poll.h>
 #include <string>
 #include <stdexcept>
 #include <map>
 #include <cstring>
+#include <cassert>
 
 #define SYSFS_GPIO_DIR "/sys/class/gpio/"
 
@@ -164,6 +166,11 @@ GPIO::GPIO( int gpio_, int direction ) : gpio( gpio_ )
    ::close( fd );
 }
 
+int GPIO::getNum( ) const
+{
+   return gpio;
+}
+
 void GPIO::close( )
 {
    int fd = open( SYSFS_GPIO_DIR "unexport", O_WRONLY );
@@ -216,22 +223,54 @@ void GPO::close( )
 
 GPI::GPI( int gpio_ ) : gpio( gpio_, GPIO::IN )
 {
-   fd = gpio_;
+   const std::string path( std::string( SYSFS_GPIO_DIR "gpio"  )
+         + std::to_string( gpio_ ) + "/value");
+   fd = open( path.c_str(), O_RDONLY );
+   if( fd < 0 )
+      throw std::invalid_argument( strerror( errno ) );
 }
 
 GPI::GPI( const char *name ) : GPI( getNumberFromName( name ) )
 {
-   const std::string path( SYSFS_GPIO_DIR "gpio"  );
-   fd = open( (path + std::to_string( fd ) + "/value").c_str(),
-         O_RDONLY );
-   if( fd < 0 )
-      throw std::invalid_argument( strerror( errno ) );
 }
 
 GPI::~GPI( )
 {
    if( fd > 0 )
       close();
+}
+
+void GPI::setEdge( int edge )
+{
+   const int ff = open( ( std::string( SYSFS_GPIO_DIR "gpio" )
+         + std::to_string( gpio.getNum() ) + "/edge" ).c_str(), O_WRONLY );
+   if( ff < 0 )
+      throw std::invalid_argument( strerror( errno ) );
+   switch( edge )
+   {
+      case NONE:    write( ff, "none", 5 ); break;
+      case RISING:  write( ff, "rising", 7 ); break;
+      case FALLING: write( ff, "falling", 8 ); break;
+      case BOTH:    write( ff, "both", 5 ); break;
+      default: ::close( ff );
+               throw std::invalid_argument( "GPI::setEdge()" );
+   }
+   ::close( ff );
+}
+
+bool GPI::wait( )
+{
+   struct pollfd fdset[1];
+   fdset[0].fd = fd;
+   fdset[0].events = POLLPRI;
+
+   switch( poll( fdset, 1, -1 ) )
+   {
+      case 1:  assert( fdset[0].revents & POLLPRI );
+               return get();
+      default:
+               throw std::runtime_error( "poll failed" );
+   }
 }
 
 bool GPI::get( )

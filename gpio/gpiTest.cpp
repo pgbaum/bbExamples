@@ -32,11 +32,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 void doIt( const char *pin )
 {
-   GPI gpio( pin );
-   for(;;)
+   GPI gpi( pin );
+   gpi.setEdge( GPI::BOTH );
+   for( int k = 0; k < 5; ++k )
    {
-      std::cout << gpio.get() << '\n';
-      std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
+      std::cout << gpi.wait() << '\n';
    }
 }
 
