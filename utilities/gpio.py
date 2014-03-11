@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Information from
 #
 # AM335x ARM CortexTM-A8 Microprocessors
