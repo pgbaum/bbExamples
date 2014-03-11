@@ -192,9 +192,8 @@ GPIO::~GPIO( )
 
 GPO::GPO( int gpio_, bool val ) : gpio( gpio_, val ? GPIO::HIGH : GPIO::LOW )
 {
-   const std::string path( SYSFS_GPIO_DIR "gpio"  );
-   fd = open( (path + std::to_string( gpio_ ) + "/value").c_str(),
-         O_WRONLY );
+   fd = open( ( std::string( SYSFS_GPIO_DIR "gpio"  )
+         + std::to_string( gpio_ ) + "/value" ).c_str(), O_WRONLY );
    if( fd < 0 )
       throw std::invalid_argument( strerror( errno ) );
 }
@@ -223,9 +222,8 @@ void GPO::close( )
 
 GPI::GPI( int gpio_ ) : gpio( gpio_, GPIO::IN )
 {
-   const std::string path( std::string( SYSFS_GPIO_DIR "gpio"  )
-         + std::to_string( gpio_ ) + "/value");
-   fd = open( path.c_str(), O_RDONLY );
+   fd = open( ( std::string( SYSFS_GPIO_DIR "gpio"  )
+         + std::to_string( gpio_ ) + "/value" ).c_str(), O_RDONLY );
    if( fd < 0 )
       throw std::invalid_argument( strerror( errno ) );
 }
