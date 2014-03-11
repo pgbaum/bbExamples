@@ -160,8 +160,8 @@ GPIO::GPIO( int gpio_, int direction ) : gpio( gpio_ )
       case LOW:  write( fd, "low", 4 ); break;
       case HIGH: write( fd, "high", 5 ); break;
       case IN:   write( fd, "in", 3 ); break;
-      case OUT:
-      default:   write( fd, "out", 4 );
+      case OUT:  write( fd, "out", 4 ); break;
+      default: throw std::invalid_argument( "GPIO direction" );
    }
    ::close( fd );
 }
